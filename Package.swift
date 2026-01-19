@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "Paywall",
+    name: "PaywallTest",
     platforms: [
         .iOS(.v12),
     ],
     products: [
-        .library(name: "Paywall", targets: ["Paywall"])
+        .library(name: "PaywallTest", targets: ["PaywallTest"])
     ],
     targets: [
         // .binaryTarget(
@@ -16,7 +16,7 @@ let package = Package(
         //     checksum: "7d005d0ccb80a9c25a923db56d1848725f540987a6decdcebeadf5f4c7a6cbf3"
         // ),
         .binaryTarget(
-            name: "Paywall",
+            name: "PaywallTest",
             path: "Sources/Paywall.xcframework" 
         )
     ]
