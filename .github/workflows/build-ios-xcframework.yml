@@ -63,6 +63,9 @@ jobs:
           name: paywall-ios-xcframework
           path: Paywall.xcframework.zip
 
+      - name: Test download
+        run: ls -la ${{ github.workspace }}/Paywall.xcframework.zip
+
       - name: Create GitHub release and attach xcframework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
