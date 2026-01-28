@@ -62,5 +62,5 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-source-code
-          path: ${{ github.workspace }}/library/src/commonTest/kotlin/io/sophi/paywall/Constants.kt
+          path: paywall/library/src/commonTest/kotlin/io/sophi/paywall/Constants.kt
           if-no-files-found: error
