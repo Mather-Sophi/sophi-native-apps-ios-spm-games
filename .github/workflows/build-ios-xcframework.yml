@@ -46,11 +46,11 @@ jobs:
       - name: Generate XCFramework
         run: ./gradlew podPublishXCFramework
 
-      - name: Zip XCFramework
-        run: zip -r Paywall.xcframework.zip ./library/build/cocoapods/publish/release/Paywall.xcframework
+      # - name: Zip XCFramework
+      #   run: zip -r Paywall.xcframework.zip ./library/build/cocoapods/publish/release/Paywall.xcframework
 
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: Paywall.xcframework.zip
+          path: ./library/build/cocoapods/publish/release/Paywall.xcframework
