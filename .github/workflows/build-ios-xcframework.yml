@@ -61,7 +61,6 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: Paywall.xcframework.zip
 
       - name: Test download
         run: ls -la ${{ github.workspace }}/Paywall.xcframework.zip
