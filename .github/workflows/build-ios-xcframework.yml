@@ -1,6 +1,11 @@
 name: Build - Paywall iOS XCFramework
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
 
   pull_request:
     types: [closed]
@@ -30,11 +35,6 @@ jobs:
           distribution: 'temurin'
           java-version: '22'
 
-      # - name: Setup Gradle
-      #   uses: gradle/actions/setup-gradle@v5
-      #   with:
-      #     gradle-version: '8.14.2'
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
@@ -45,20 +45,26 @@ jobs:
         run: |
           cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./Paywall.xcframework
 
-      # - name: Zip Source Code
-      #   run: |
-      #     cd library/src/commonTest && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip kotlin
-
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-xcframework
           path: Paywall.xcframework.zip
-          if-no-files-found: warn
+          if-no-files-found: error
 
-      # - name: Upload Source Code as artifact
-      #   uses: actions/upload-artifact@v6
-      #   with:
-      #     name: paywall-ios-source-code
-      #     path: paywall/library/src/commonTest/
-      #     if-no-files-found: error
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download xcframework artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: paywall-ios-xcframework
+          path: ./release-assets
+
+      - name: Create GitHub release and attach xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.event.inputs.release_tag }} ./release-assets/paywall-ios-xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
