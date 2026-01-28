@@ -67,4 +67,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ github.event.inputs.release_tag }} ${GITHUB_WORKSPACE}/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
+          gh release create ${{ github.event.inputs.release_tag }} ${{ github.workspace }}/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
