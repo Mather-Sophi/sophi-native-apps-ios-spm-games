@@ -35,15 +35,15 @@ jobs:
           distribution: 'temurin'
           java-version: '22'
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+      # - name: Setup Gradle
+      #   uses: gradle/gradle-build-action@v2
 
-      - name: Generate XCFramework
-        run: ./gradlew podPublishXCFramework
+      # - name: Generate XCFramework
+      #   run: ./gradlew podPublishXCFramework
 
       - name: Zip XCFramework
         run: |
-          cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./Paywall.xcframework
+          cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./file.xcframework
 
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
@@ -61,10 +61,10 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: ./release-assets
+          path: Paywall.xcframework.zip
 
       - name: Create GitHub release and attach xcframework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ github.event.inputs.release_tag }} ./release-assets/paywall-ios-xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
+          gh release create ${{ github.event.inputs.release_tag }} Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
