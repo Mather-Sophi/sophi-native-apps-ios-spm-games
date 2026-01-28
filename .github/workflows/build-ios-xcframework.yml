@@ -31,26 +31,35 @@ jobs:
           pwd
           # find . -type f
 
-      - name: Set up JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '22'
-          cache: gradle
+      # - name: Set up JDK
+      #   uses: actions/setup-java@v5
+      #   with:
+      #     distribution: 'temurin'
+      #     java-version: '22'
+      #     cache: gradle
 
       # - name: Setup Gradle
       #   uses: gradle/actions/setup-gradle@v5
       #   with:
       #     gradle-version: '8.14.2'
 
-      - name: Generate XCFramework
-        run: ./gradlew podPublishXCFramework
+      # - name: Generate XCFramework
+      #   run: ./gradlew podPublishXCFramework
 
       # - name: Zip XCFramework
       #   run: zip -r Paywall.xcframework.zip ./library/build/cocoapods/publish/release/Paywall.xcframework
 
-      - name: Upload XCFramework as artifact
+      # - name: Zip Source Code
+      #   run: zip -r Paywall.xcframework.zip ./library/src
+
+      # - name: Upload XCFramework as artifact
+      #   uses: actions/upload-artifact@v6
+      #   with:
+      #     name: paywall-ios-xcframework
+      #     path: ./library/build/cocoapods/publish/release/Paywall.xcframework
+
+      - name: Upload Source Code as artifact
         uses: actions/upload-artifact@v6
         with:
-          name: paywall-ios-xcframework
-          path: ./library/build/cocoapods/publish/release/Paywall.xcframework
+          name: paywall-ios-source-code
+          path: ./library/src/commonTest
