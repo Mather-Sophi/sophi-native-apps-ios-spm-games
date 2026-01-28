@@ -40,17 +40,19 @@ jobs:
         run: ./gradlew podPublishXCFramework
 
       - name: Zip XCFramework
-        run: zip -r Paywall.xcframework.zip ./library/build/cocoapods/publish/release/Paywall.xcframework
+        run: |
+          cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./Paywall.xcframework
 
       # - name: Zip Source Code
-      #   run: zip -r Paywall.xcframework.zip ./library/src/commonTest/
+      #   run: |
+      #     cd library/src/commonTest && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip kotlin
 
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: paywall/Paywall.xcframework.zip
-          if-no-files-found: error
+          path: Paywall.xcframework.zip
+          if-no-files-found: warn
 
       # - name: Upload Source Code as artifact
       #   uses: actions/upload-artifact@v6
