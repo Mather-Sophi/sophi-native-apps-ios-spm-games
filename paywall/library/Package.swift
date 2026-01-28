@@ -2,17 +2,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "PaywallTest",
+    name: "Paywall",
     platforms: [
         .iOS(.v12),
     ],
     products: [
-        .library(name: "PaywallTest", targets: ["PaywallTest"])
+        .library(name: "Paywall", targets: ["Paywall"])
     ],
     targets: [
         .binaryTarget(
-            name: "PaywallTest",
-            path: "Sources/Paywall.xcframework" 
+            name: "Paywall",
+            path: "build/cocoapods/publish/release/Paywall.xcframework"
         )
     ]
 )
