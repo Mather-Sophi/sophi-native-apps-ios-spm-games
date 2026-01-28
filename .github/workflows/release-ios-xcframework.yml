@@ -1,0 +1,24 @@
+name: Release - Paywall iOS XCFramework
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  attach-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download xcframework artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: paywall-ios-xcframework
+          path: ./release-assets
+      - name: Create GitHub release and attach xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.event.inputs.release_tag }} ./release-assets/paywall-ios-xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft false --prerelease false
