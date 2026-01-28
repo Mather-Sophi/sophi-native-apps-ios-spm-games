@@ -17,7 +17,7 @@ defaults:
 jobs:
   build:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -62,4 +62,4 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-source-code
-          path: ./library/src/commonTest
+          path: library/src/commonTest
