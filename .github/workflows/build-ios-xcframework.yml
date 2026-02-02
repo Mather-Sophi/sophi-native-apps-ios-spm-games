@@ -64,9 +64,8 @@ jobs:
       
       - name: Zip XCFramework
         run: |
-          pwd
-          ls -ltr  ${GITHUB_WORKSPACE}
-          ls -ltr ${{ steps.artifact-download.outputs.download-path }}
+          ls -R ${{ steps.artifact-download.outputs.download-path }}
+          ls -R ${{ steps.artifact-download.outputs.download-path }}/Paywall.xcframework
           zip -r Paywall.xcframework.zip ${{ steps.artifact-download.outputs.download-path }}/Paywall.xcframework
       # - name: Zip XCFramework
       #   run: |
