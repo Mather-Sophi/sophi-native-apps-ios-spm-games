@@ -21,7 +21,8 @@ defaults:
     working-directory: paywall
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
 
@@ -34,19 +35,21 @@ jobs:
           echo "Release tag format is valid: ${{ github.event.inputs.release_tag }}"
 
       - name: Check if release tag already exists
-        # env:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set +e
           gh release view ${{ github.event.inputs.release_tag }} > /dev/null 2>&1
-          if [[ $? -eq 0 ]]; then
+          EXIT_CODE=$?
+          set -e
+          if [[ $EXIT_CODE -eq 0 ]]; then
             echo "Error: Release tag ${{ github.event.inputs.release_tag }} already exists."
             exit 1
           else
             echo "Release tag ${{ github.event.inputs.release_tag }} does not exist. Proceeding..."
           fi
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -114,8 +117,8 @@ jobs:
           sed -i 's/\${CHECKSUM}/${{ steps.xc-framework-checksum.outputs.checksum }}/g' library/Package.swift
           cat library/Package.swift
           
-      - name: Commit and push Package.swift changes
-        run: |
+      # - name: Commit and push Package.swift changes
+      #   run: | 
 
 
         # - uses: swift-actions/setup-swift@v3
