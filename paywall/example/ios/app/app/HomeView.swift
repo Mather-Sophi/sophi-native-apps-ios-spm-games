@@ -1,26 +1,32 @@
-//
-//  HomeView.swift
-//  app
-//
-//  Created by Siddhant Misra on 2025-11-18.
-//
-
 import SwiftUI
 
 struct HomeView: View {
-//    let contents: [ContentData]
     let contentRepo = ContentRepository()
+    @State var isLoggedIn: Bool = isUserLoggedIn()
     var body: some View {
-        NavigationStack
-        {
-            VStack{
+        NavigationStack {
+            VStack {
                 ZStack {
                     Color.matherPrimary.ignoresSafeArea(.all)
-                }.frame(height:0)
-                ScrollView{
+                }.frame(height: 0)
+                Button(action: {
+                    if isLoggedIn {
+                        logout()
+                    } else {
+                        login()
+                    }
+                    isLoggedIn = isUserLoggedIn()
+
+                }) {
+                    Image(systemName: "person.fill")
+                    Text(isLoggedIn ? "Sign Out" : "Sign In")
+                }
+                ScrollView {
                     if let contents = contentRepo.getAll() {
                         ForEach(contents) { content in
-                            NavigationLink(destination: ContentView(contentId: content.id)){
+                            NavigationLink(
+                                destination: ContentView(contentId: content.id)
+                            ) {
                                 CardLayoutView(content: content)
                             }
                         }
@@ -28,7 +34,6 @@ struct HomeView: View {
                 }
                 Spacer(minLength: 0)
             }
-            .navigationTitle("Home")
         }
     }
 }

@@ -19,7 +19,7 @@ internal fun ParametersBuilder.appendRequestParameters(context: Context, modelTr
         this.append("page.section", it as String)
     }
     context.visitorType.let { this.append("visitor.type", it.value) }
-    context.os?.let { this.append("visitor.device.os", it) }
+    context.os?.let { this.append("visitor.device.os", it.value) }
     context.type?.let { this.append("visitor.device.type", it.value) }
     context.viewer?.let { this.append("visitor.device.viewer", it) }
     context.referrer?.let { this.append("visitor.visit.referrer", it.value) }

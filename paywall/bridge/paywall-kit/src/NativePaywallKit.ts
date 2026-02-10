@@ -6,6 +6,8 @@ export type VisitorType = 'anonymous' | 'registered';
 export type ReferrerMedium = 'campaign' | 'direct' | 'internal' | 'search' | 'social' | 'other';
 export type ReferrerSource = 'google' | 'yahoo' | 'duckduckgo' | 'bing' | 'facebook' | 'instagram' | 'x' | 't' | 'linkedin' | 'reddit' | 'newsletter';
 export type ReferrerChannel = 'search' | 'news' | 'discover';
+export type DeviceType = 'native';
+export type DeviceOs = 'ios' | 'android';
 
 export type Visitor = {
   session: Session | null;
@@ -24,6 +26,7 @@ export type ReferrerData = {
   medium: ReferrerMedium;
   source: ReferrerSource | null;
   channel: ReferrerChannel | null;
+  utmParameters: Object | null;
 }
 
 export type UserDimensions = {
@@ -48,29 +51,23 @@ export type UserDimensions = {
   twentyEightDayTopLevelSectionsByArticle: number;
   twentyEightDayVisitCount: number;
   daysSinceLastVisit: number;
-  visitorType: string;
+  visitorType: VisitorType;
   visitor: Visitor | null;
   timeZone: string | null;
-  referrer: string | null;
+  referrer: ReferrerMedium;
   referrerData: ReferrerData | null;
-  countryCode: string | null;
 }
 
 export type DeviceDimensions = {
   hourOfDay: number; // 0-23
-  os: string | null; // e.g., "iOS", "Android"
-  type: string | null; // e.g., "mobile", "tablet"
+  os: DeviceOs;
+  type: DeviceType;
   viewer: string | null; // e.g., "company-ios-1.0.0"
 }
 
-export type WallDecisionExperiment = {
-  experimentId: string;
-  assignedGroup: string;
-}
-
 export type WallDecisionOutcome = {
-  wallType: string | null;
-  wallTypeCode: number | null;
+  wallType?: string | null;
+  wallTypeCode?: number | null;
   wallVisibility: string;
   wallVisibilityCode: number;
 }
@@ -79,11 +76,14 @@ export type WallDecision = {
   id: string;
   createdAt: string;
   trace: string;
-  context: string;
-  inputs: string;
+  context?: string | null;
+  inputs?: string | null;
   outcome: WallDecisionOutcome;
-  searchParams: string;
-  experiment: WallDecisionExperiment;
+  searchParams?: string | null;
+  experimentCode?: string | null;
+  paywallScore?: number | null;
+  userProperties?: string | null;
+  contentProperties?: string | null;
 }
 
 export type PaywallDeciderConfig = {
@@ -97,12 +97,24 @@ export interface Spec extends TurboModule {
   initializePaywallDeciderRepository(
     userDimensions: UserDimensions,
     deviceDimensions: DeviceDimensions
-  ): void;
+  ): Promise<void>;
+
   getPaywallDeciderConfigByHost(
     host: string,
     settings: Object
-  ): PaywallDeciderConfig;
-  decide(contentId: string, assignedGroup?: string): WallDecision;
+  ): Promise<PaywallDeciderConfig>;
+
+  decide(
+    contentId: string,
+    assignedGroup?: string,
+    contentProperties?: Object,
+    userProperties?: Object
+  ): Promise<WallDecision>;
+
+  updateDimensions(
+    userDimensions: UserDimensions,
+    deviceDimensions: DeviceDimensions
+  ): Promise<void>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('PaywallKit');

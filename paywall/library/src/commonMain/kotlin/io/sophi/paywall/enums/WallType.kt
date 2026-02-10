@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class WallType(val value: String, val code: Int, val traceCode: String) {
-    @SerialName(value = "nowall")
-    NOWALL("nowall", 0, ""),
 
     @SerialName("paywall")
     PAYWALL("paywall", 1, "d"),

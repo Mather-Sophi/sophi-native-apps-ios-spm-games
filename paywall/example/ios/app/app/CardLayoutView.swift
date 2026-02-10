@@ -1,10 +1,3 @@
-//
-//  CardLayoutView.swift
-//  app
-//
-//  Created by Siddhant Misra on 2025-11-18.
-//
-
 import SwiftUI
 
 struct CardLayoutView: View {
@@ -31,8 +24,8 @@ struct CardLayoutView: View {
                     .frame(height: 120)
                     .cornerRadius(10)
             }
-                    
-            VStack(alignment: .leading){
+
+            VStack(alignment: .leading) {
                 Text(content.headline)
                     .font(.headline)
                     .fontWeight(.medium)
@@ -40,7 +33,7 @@ struct CardLayoutView: View {
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .padding(.leading, 0.0)
-                
+
                 Text(content.plainText)
                     .font(.body)
                     .fontWeight(.light)
@@ -48,23 +41,28 @@ struct CardLayoutView: View {
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .padding(.top)
-                
+
                 Text(content.byline)
                     .font(.footnote)
                     .multilineTextAlignment(.trailing)
                     .padding(.top, 6.0)
-                
+
             }
-            .padding(/*@START_MENU_TOKEN@*/.horizontal/*@END_MENU_TOKEN@*/)
-            
+            .padding( /*@START_MENU_TOKEN@*/.horizontal /*@END_MENU_TOKEN@*/)
+
             Divider()
         }
-        
-            
+
     }
 }
 
 #Preview {
-    let data = ContentData(id: "ContentID123", headline: "Some dummy headline", byline: "John Doe", plainText: "Some image long text with blah blah blah...", imageUrl: "https://picsum.photos/800/400?random=1")
+    let data = ContentData(
+        id: "ContentID123",
+        headline: "Some dummy headline",
+        byline: "John Doe",
+        plainText: "Some image long text with blah blah blah...",
+        imageUrl: "https://picsum.photos/800/400?random=1"
+    )
     CardLayoutView(content: data)
 }

@@ -37,7 +37,8 @@ jobs:
         # env:
           # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view ${{ github.event.inputs.release_tag }} > /dev/null 2>&1; then
+          gh release view ${{ github.event.inputs.release_tag }} > /dev/null 2>&1
+          if [[ $? -eq 0 ]]; then
             echo "Error: Release tag ${{ github.event.inputs.release_tag }} already exists."
             exit 1
           else
@@ -77,7 +78,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      
       - uses: actions/checkout@v6
+        # TODO: Checkout Target Repository that contains Package.swift
 
       - id: artifact-download
         name: Download xcframework artifact
@@ -110,6 +113,9 @@ jobs:
           sed -i 's/\${RELEASE_TAG}/${{ github.event.inputs.release_tag }}/g' library/Package.swift
           sed -i 's/\${CHECKSUM}/${{ steps.xc-framework-checksum.outputs.checksum }}/g' library/Package.swift
           cat library/Package.swift
+          
+      - name: Commit and push Package.swift changes
+        run: |
 
 
         # - uses: swift-actions/setup-swift@v3

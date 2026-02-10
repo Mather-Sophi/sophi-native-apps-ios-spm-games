@@ -1,7 +1,9 @@
 package com.paywallkit
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.module.annotations.ReactModule
@@ -26,35 +28,102 @@ class PaywallKitModule(reactContext: ReactApplicationContext) :
   }
 
   override fun initializePaywallDeciderRepository(
-    userDimensions: ReadableMap,
-    deviceDimensions: ReadableMap
+    userDimensions: ReadableMap?,
+    deviceDimensions: ReadableMap?,
+    promise: Promise?
   ) {
-    deciderRepository = PaywallDeciderRepository.createNewFromData(
-      userDimensions = UserDimensions.fromMap(userDimensions.toHashMap()),
-      deviceDimensions = DeviceDimensions.fromMap(deviceDimensions.toHashMap())
-    )
+    try{
+      if (deviceDimensions == null) {
+        promise?.reject(INVALID_ARGUMENT_ERROR, "Device dimensions cannot be null")
+        return
+      }
+      if (userDimensions == null) {
+        promise?.reject(INVALID_ARGUMENT_ERROR, "User dimensions cannot be null")
+        return
+      }
+      deciderRepository = PaywallDeciderRepository.createNewFromData(
+        userDimensions =  UserDimensions.fromMap(userDimensions.toHashMap()),
+        deviceDimensions = DeviceDimensions.fromMap(deviceDimensions.toHashMap())
+      )
+      promise?.resolve(null)
+    } catch(e: Exception){
+      promise?.reject(INITIALIZATION_ERROR, "Failed to initialize PaywallDeciderRepository", e)
+    }
   }
 
   override fun getPaywallDeciderConfigByHost(
     host: String?,
-    settings: ReadableMap?
-  ): WritableMap? {
+    settings: ReadableMap?,
+    promise: Promise?
+  ) {
     if (host.isNullOrEmpty()) {
-      throw IllegalArgumentException("Host cannot be null or empty")
+      promise?.reject(INVALID_ARGUMENT_ERROR, "Host cannot be null or empty")
+      return
     }
 
-    // ToDo combine in one single call
-    paywallDecider = deciderRepository?.getOneByHost(
-      host = host ?: "",
-      settings = mapOf()//settings?.toHashMap()
-    )
-    val config = deciderRepository?.getPaywallDeciderConfigByHost(
-      host = host ?: "",
-      settings = mapOf()//?.toHashMap()
-    )
-    return convertConfigToMap(config)
+    if (deciderRepository == null) {
+      promise?.reject(NOT_INITIALIZED_ERROR, "PaywallDeciderRepository is not initialized.")
+      return
+    }
+
+    try {
+      paywallDecider = deciderRepository?.getOneByHost(
+        host = host,
+        settings = toMap(settings)
+      )
+      promise?.resolve(convertConfigToMap(paywallDecider?.config))
+    } catch(e: Exception){
+      promise?.reject(PAYWALL_DECIDER_FETCH_ERROR, "Unable to fetch decider for host ${host}.", e)
+    }
   }
 
+  override fun decide(
+    contentId: String?,
+    assignedGroup: String?,
+    contentProperties: ReadableMap?,
+    userProperties: ReadableMap?,
+    promise: Promise?
+  ) {
+
+    if (contentId.isNullOrEmpty()) {
+      promise?.reject(INVALID_ARGUMENT_ERROR, "ContentId cannot be null or empty")
+      return
+    }
+
+    if(paywallDecider == null){
+      promise?.reject(NOT_INITIALIZED_ERROR, "PaywallDecider is not initialized. Call getOneByHost to get the PaywallDecider.")
+      return
+    }
+    try {
+      runBlocking {
+        val decision = paywallDecider?.decide(
+          contentId = contentId,
+          assignedGroup = assignedGroup,
+          contentProperties = toMapOfAny(contentProperties),
+          userProperties = toMapOfAny(userProperties)
+        )
+        promise?.resolve(convertDecisionToMap(decision))
+      }
+    } catch(e: Exception){
+      promise?.reject(DECISION_ERROR, "Error occurred while making decision for contentId ${contentId}.", e)
+    }
+  }
+
+  override fun updateDimensions(
+    userDimensions: ReadableMap?,
+    deviceDimensions: ReadableMap?,
+    promise: Promise?
+  ) {
+    try {
+      paywallDecider?.updateDimensions(
+        userDimensions = userDimensions?.let { UserDimensions.fromMap(it.toHashMap()) },
+        deviceDimensions = deviceDimensions?.let { DeviceDimensions.fromMap(it.toHashMap()) }
+      )
+      promise?.resolve(null)
+    } catch (e: Exception) {
+      promise?.reject(UPDATE_ERROR, "Error updating dimensions: ${e.message}", e)
+    }
+  }
 
   private fun convertConfigToMap(config: PaywallDeciderConfig?): WritableMap? {
     if (config == null) return null
@@ -76,53 +145,83 @@ class PaywallKitModule(reactContext: ReactApplicationContext) :
     return map
   }
 
-  override fun decide(
-    contentId: String,
-    assignedGroup: String?,
-    contentProperties: Map<String, Any?>?,
-    userProperties: Map<String, Any?>?
-  ): WritableMap {
-    var decision: WallDecision? = null
-    runBlocking {
-      if (paywallDecider == null) {
-        throw IllegalStateException("PaywallDecider is not initialized. Call getPaywallDeciderConfigByHost first.")
-      }
-      decision = paywallDecider?.decide(contentId, assignedGroup, contentProperties, userProperties)
-    }
-    return convertDecisionToMap(decision)
-  }
-
   private fun convertDecisionToMap(decision: WallDecision?): WritableMap {
     val map = WritableNativeMap()
     if (decision == null) return map
 
     map.putString("id", decision.id)
     map.putString("createdAt", decision.createdAt)
-    map.putString("trace", decision.trace)
-    map.putString("context", decision.context)
-    map.putString("inputs", decision.inputs)
-    map.putString("searchParams", decision.searchParams)
+    decision.trace?.let { map.putString("trace", it) }
+    decision.context?.let { map.putString("context", it) }
+    decision.inputs?.let { map.putString("inputs", it) }
+    decision.searchParams?.let { map.putString("searchParams", it) }
+    decision.experimentsCode?.let { map.putString("experimentsCode", it) }
+    decision.paywallScore?.let { map.putInt("paywallScore", it) }
+    decision.userProperties?.let { map.putString("userProperties", it) }
+    decision.contentProperties?.let { map.putString("contentProperties", it) }
 
     val outcomeMap = WritableNativeMap()
-    if (decision.outcome.wallType == null)
+    if (decision.outcome.wallType == null) {
       outcomeMap.putNull("wallType")
-    else
-      outcomeMap.putString("wallType", decision.outcome.wallType ?: "")
-
-    if (decision.outcome.wallType == null)
       outcomeMap.putNull("wallTypeCode")
-    else
+    } else {
+      outcomeMap.putString("wallType", decision.outcome.wallType.toString())
       outcomeMap.putInt("wallTypeCode", decision.outcome.wallTypeCode!!)
+    }
 
-    outcomeMap.putString("wallVisibility", decision.outcome.wallVisibility)
+    outcomeMap.putString("wallVisibility", decision.outcome.wallVisibility.toString())
     outcomeMap.putInt("wallVisibilityCode", decision.outcome.wallVisibilityCode)
     map.putMap("outcome", outcomeMap)
 
-    val experimentMap = WritableNativeMap()
-    experimentMap.putString("experimentId", decision.experiment.experimentId)
-    experimentMap.putString("assignedGroup", decision.experiment.assignedGroup)
-    map.putMap("experiment", experimentMap)
+    return map
+  }
 
+  fun toMap(readableMap: ReadableMap?): Map<String, String> {
+    if (readableMap == null) return emptyMap()
+    val map = mutableMapOf<String, String>()
+    val iterator = readableMap.keySetIterator()
+    while (iterator.hasNextKey()) {
+      val key = iterator.nextKey()
+      when (readableMap.getType(key)) {
+        ReadableType.String -> map[key] = readableMap.getString(key) ?: ""
+        else -> {}
+      }
+    }
+    return map
+  }
+
+  fun toMapOfAny(readableMap: ReadableMap?): Map<String, Any?>? {
+    if (readableMap == null) return null
+    val map = mutableMapOf<String, Any?>()
+    val iterator = readableMap.keySetIterator()
+    while (iterator.hasNextKey()) {
+      val key = iterator.nextKey()
+      when (readableMap.getType(key)) {
+        ReadableType.String -> map[key] = readableMap.getString(key)
+        ReadableType.Number -> map[key] = readableMap.getDouble(key)
+        ReadableType.Boolean -> map[key] = readableMap.getBoolean(key)
+        ReadableType.Map -> map[key] = toMapOfAny(readableMap.getMap(key))
+        ReadableType.Array -> {
+          val array = readableMap.getArray(key)
+          val list = mutableListOf<Any?>()
+          if (array != null) {
+            for (i in 0 until array.size()) {
+              when (array.getType(i)) {
+                ReadableType.String -> list.add(array.getString(i))
+                ReadableType.Number -> list.add(array.getDouble(i))
+                ReadableType.Boolean -> list.add(array.getBoolean(i))
+                ReadableType.Map -> list.add(toMapOfAny(array.getMap(i)))
+                ReadableType.Array -> list.add(null) // Nested arrays not handled
+                ReadableType.Null -> list.add(null)
+              }
+            }
+          }
+          map[key] = list
+        }
+
+        ReadableType.Null -> map[key] = null
+      }
+    }
     return map
   }
 

@@ -33,7 +33,7 @@ class ContextTest {
         referrer: ReferrerMedium? = null,
         referrerData: UserDimensions.ReferrerData? = null,
         hourOfDay: Int = 14,
-        os: String? = "ios",
+        os: OSType? = OSType.IOS,
         type: DeviceType? = DeviceType.NATIVE,
         viewer: String? = "app",
         visitorType: VisitorType = VisitorType.ANONYMOUS,
@@ -80,7 +80,7 @@ class ContextTest {
     }
 
     @Test
-    fun testContextCreationWithValidValues() {
+    fun `context created successfully with valid values`() {
         val context = createTestContext()
 
         assertEquals(5, context.todayPageViews)
@@ -178,7 +178,7 @@ class ContextTest {
     @Test
     fun testGetEncodedInputs_WithDeviceData() {
         val context = createTestContext(
-            os = "android",
+            os = OSType.ANDROID,
             viewer = "app-version-1"
         )
 
@@ -223,7 +223,7 @@ class ContextTest {
 
         val deviceDimensions = DeviceDimensions(
             hourOfDay = 15,
-            os = "ios",
+            os = OSType.IOS,
             type = DeviceType.MOBILE,
             viewer = "app"
         )
@@ -244,7 +244,7 @@ class ContextTest {
         assertEquals(10, context.sevenDayPageViews)
         assertEquals("America/Toronto", context.timeZone)
         assertEquals(15, context.hourOfDay)
-        assertEquals("ios", context.os)
+        assertEquals("ios", context.os?.value)
         assertEquals(VisitorType.REGISTERED, context.visitorType)
         assertEquals("sports", context.content?.properties?.get("section"))
     }

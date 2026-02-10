@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class ResponseTest {
     @Test
-    fun testGetContextAsQueryString() {
+    fun `context converted to query string correctly`() {
         val context = buildJsonObject {
             put("content", buildJsonObject {
                 put("id", JsonPrimitive("72322287007"))
@@ -43,7 +43,7 @@ class ResponseTest {
     }
 
     @Test
-    fun testResponseSerializationFromJson() {
+    fun `response deserialized from JSON correctly`() {
         val jsonResponse = """
         {
             "id": "5e76084f-3585-47c0-8eb7-0be0f7d87b15",

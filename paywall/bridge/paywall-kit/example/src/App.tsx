@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Text, View, StyleSheet, ScrollView, Button } from 'react-native';
+import { useState } from 'react';
+import { Text, View, StyleSheet, ScrollView, Button, Platform } from 'react-native';
 import {
   type DeviceDimensions,
   PaywallDeciderRepository,
@@ -39,12 +39,13 @@ class MockUserDimensionRepository implements UserDimensionRepository {
       visitorType: 'registered',
       visitor: null,
       timeZone: 'America/New_York',
-      referrer: 'https://google.com',
+      referrer: 'search',
       referrerData: {
         medium: 'search',
         source: 'google',
         channel: 'discover',
-      },
+        utmParameters: null
+      }
     };
   }
 }
@@ -54,9 +55,9 @@ class MockDeviceDimensionRepository implements DeviceDimensionRepository {
   getAll(): DeviceDimensions {
     return {
       hourOfDay: new Date().getHours(),
-      os: 'iOS',
-      type: 'mobile',
-      viewer: 'paywall-kit-example-2.0.0',
+      os: Platform.OS === 'ios' ? 'ios' : 'android',
+      type: 'native',
+      viewer: 'paywall-kit-example-1.0.0',
     };
   }
 }
@@ -66,33 +67,40 @@ export default function App() {
   const [decision, setDecision] = useState<WallDecision | null>(null);
   const [decider, setDecider] = useState<PaywallDecider | null>(null);
 
-  // Create repository
-  const repository = useMemo(() => {
-    const userRepo = new MockUserDimensionRepository();
-    const deviceRepo = new MockDeviceDimensionRepository();
-    return PaywallDeciderRepository.createNew(userRepo, deviceRepo);
-  }, []);
 
   const handleInitialize = () => {
-    try {
-      const newDecider = repository.getOneByHost('www.statesman.com', {
-        apiTimeoutInMilliSeconds: '5000',
-      });
-      setDecider(newDecider);
-      setResult(`✅ PaywallDecider initialized successfully: ${JSON.stringify(newDecider)}`);
+    const startTime = Date.now();
+    const userRepo = new MockUserDimensionRepository();
+    const deviceRepo = new MockDeviceDimensionRepository();
+    const repository = PaywallDeciderRepository.createNew(userRepo, deviceRepo);
+    
+    repository.getOneByHost('test.sophi.codes', 
+      {        
+        apiTimeoutInMilliSeconds: '1500',
+        paywallApiBaseUrl: 'https://paywall.sophi.codes',
+        onDeviceModelRepositoryUrl: (Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000')
+      }
+    ).then((decider: PaywallDecider) => {
+      const duration = Date.now() - startTime;
+      setDecider(decider);
+      setResult(
+        `✅ PaywallDecider initialized successfully (${duration}ms)`
+      );
+    })
+    .catch((error: any) => {
+      const duration = Date.now() - startTime;
       setDecision(null);
-    } catch (error) {
-      setResult(`❌ Error initializing: ${error}`);
-    }
+      setResult(`❌ Error initializing: ${error} (${duration}ms)`);
+    });
   };
 
-  const handleDecide = () => {
+  const handleDecide = async () => {
     try {
       if (!decider) {
         setResult('❌ Please initialize the decider first (Button 1)');
         return;
       }
-      const wallDecision = decider.decide('test-content-123', 'control');
+      const wallDecision = await decider.decide('test-content-123', 'control');
       setDecision(wallDecision);
       setResult('✅ Decision received - see details below');
     } catch (error) {
@@ -129,24 +137,27 @@ export default function App() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Decision Details:</Text>
           <View style={styles.resultBox}>
-            <Text style={styles.resultText}>ID: {decision.id}</Text>
-            <Text style={styles.resultText}>Created: {decision.createdAt}</Text>
-            <Text style={styles.resultText}>Trace: {decision.trace}</Text>
-            <Text style={styles.resultText}>Context: {decision.context}</Text>
-            <Text style={styles.resultText}>Inputs: {decision.inputs}</Text>
+            <Text style={styles.resultText}>ID: {decision.id || 'N/A'}</Text>
+            <Text style={styles.resultText}>Created: {decision.createdAt || 'N/A'}</Text>
+            <Text style={styles.resultText}>Trace: {decision.trace || 'N/A'}</Text>
+            <Text style={styles.resultText}>Context: {decision.context || 'N/A'}</Text>
+            <Text style={styles.resultText}>Inputs: {decision.inputs || 'N/A'}</Text>
             <Text style={styles.resultText}>
-              Wall Type: {decision.outcome.wallType} (code:{' '}
-              {decision.outcome.wallTypeCode})
+              Wall Type: {decision.outcome?.wallType || 'N/A'} (code:{' '}
+              {decision.outcome?.wallTypeCode || 'N/A'})
             </Text>
             <Text style={styles.resultText}>
-              Visibility: {decision.outcome.wallVisibility} (code:{' '}
-              {decision.outcome.wallVisibilityCode})
+              Visibility: {decision.outcome?.wallVisibility || 'N/A'} (code:{' '}
+              {decision.outcome?.wallVisibilityCode || 'N/A'})
             </Text>
             <Text style={styles.resultText}>
-              Experiment: {decision.experiment.experimentId} /{' '}
-              {decision.experiment.assignedGroup}
+              Experiment Codes: {decision.experimentCode || 'N/A'}
             </Text>
-            <Text style={styles.resultText}>Search Params: {decision.searchParams}</Text>
+            <Text style={styles.resultText}>Search Params: {decision.searchParams || 'N/A'}</Text>
+            <Text style={styles.resultText}>Paywall Score: {decision.paywallScore || 'N/A'}</Text>
+            <Text style={styles.resultText}>
+              {JSON.stringify(decision, null, 2)}
+            </Text>
           </View>
         </View>
       )}

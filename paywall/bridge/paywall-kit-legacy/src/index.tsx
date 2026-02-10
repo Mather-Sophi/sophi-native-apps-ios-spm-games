@@ -23,7 +23,6 @@ export {
   type UserDimensions,
   type DeviceDimensions,
   type WallDecision,
-  type WallDecisionExperiment,
   type WallDecisionOutcome,
   type Session,
   type Visitor,

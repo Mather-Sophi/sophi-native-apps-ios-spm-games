@@ -1,0 +1,40 @@
+name: Test - Paywall iOS library
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+  pull_request:
+    types: [closed]
+    branches: [main]
+    paths:
+      - 'paywall/library/**'
+      - '!paywall/library/README.md'
+      - '!paywall/library/tools'
+
+
+defaults:
+  run:
+    working-directory: paywall/library
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: '8.14'
+
+      - name: Run unit tests
+        run: gradle paywall:allTests

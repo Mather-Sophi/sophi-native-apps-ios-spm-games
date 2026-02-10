@@ -77,8 +77,8 @@ class PaywallDecider(
         return decision.copy(
             context = context.getEncodedContext(),
             inputs = context.getEncodedInputs(),
-            userProperties = context.getEncodedUserProperties(configuration.userPropertyCodes),
-            contentProperties = context.getEncodedContentProperties(configuration.contentPropertyCodes)
+            userProperties = context.getEncodedUserProperties(configuration.propertyCodes?.user),
+            contentProperties = context.getEncodedContentProperties(configuration.propertyCodes?.content)
         )
     }
 

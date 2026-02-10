@@ -10,6 +10,7 @@ androidStartup = "1.2.0"
 kermit = "2.0.4"
 lifecycleRuntimeCompose = "2.8.4"
 okio = "3.9.1"
+kover = "0.9.5"
 
 [libraries]
 javascriptengine = { module = "androidx.javascriptengine:javascriptengine", version.ref = "javascriptengine" }
@@ -32,3 +33,4 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}

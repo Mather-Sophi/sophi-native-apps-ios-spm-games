@@ -79,11 +79,4 @@ class PaywallDeciderRepository() {
             httpClient = HttpClientProvider.getClient(deciderSettings)
         )
     }
-
-    // Return properties required to build PaywallDeciderConstructor since we can only return instances over the bridge.
-    fun getPaywallDeciderConfigByHost(host: String, settings: Map<String, String>): PaywallDeciderConfig {
-        return getOneByHost(host, settings).config
-    }
-
-
 }

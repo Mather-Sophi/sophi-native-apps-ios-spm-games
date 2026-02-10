@@ -1,5 +1,4 @@
-// swift-tools-version: 6.2
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version:5.3
 
 import PackageDescription
 
@@ -14,8 +13,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Paywall",
-            url: "https://github.com/Mather-Sophi/sophi-native-apps-ios-spm-games/releases/download/${RELEASE_TAG}/Paywall.xcframework.zip",
-            checksum: "${CHECKSUM}"
+            path: "build/cocoapods/publish/release/Paywall.xcframework"
         )
     ]
 )

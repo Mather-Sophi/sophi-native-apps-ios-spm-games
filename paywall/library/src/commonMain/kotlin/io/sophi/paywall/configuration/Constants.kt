@@ -6,10 +6,10 @@ val FALLBACK_PARAMETERS: Lazy<Parameters> = lazy {
         avgBonus = 0.1,
         avgRegwallBonus = 0.0,
         isRandomized = false,
-        visitorBonusParameters = mapOf(
+        visitorPaywallBonusParameters = mapOf(
 
         ),
-        visitorRegwallBonusParameters = BonusParameters(
+        regwallBonusParameters = BonusParameters(
             hourOfDay = mapOf(
                 0 to -0.44, 2 to -0.43, 4 to -0.24, 6 to 0.11, 8 to 0.16,
                 10 to 0.14, 12 to 0.1, 14 to 0.13, 16 to -0.18, 18 to -0.03,
@@ -55,10 +55,7 @@ val FALLBACK_PARAMETERS: Lazy<Parameters> = lazy {
                 0 to 0.65, 1 to -0.04, 2 to -0.02, 3 to 0.02, 4 to -0.19,
                 5 to -0.2, 6 to -0.07
             ),
-            viewer = mapOf(
-                "android" to -0.4, "ios" to -0.36
-            ),
-            sevenDaysStopRate = mapOf(
+            sevenDayStopRate = mapOf(
                 0.0 to 0.33, 0.1 to 0.69, 0.2 to -0.66, 0.3 to -0.42,
                 0.4 to -0.69, 0.5 to -0.48, 0.6 to -0.61, 0.7 to -0.52,
                 0.8 to -0.56, 0.9 to -0.56, 1.0 to -0.33
@@ -68,17 +65,10 @@ val FALLBACK_PARAMETERS: Lazy<Parameters> = lazy {
                 0.4 to 3.05, 0.5 to 0.65, 0.6 to 1.33, 0.7 to 0.59,
                 0.8 to 0.34, 0.9 to 0.66, 1.0 to -0.14
             ),
-            deviceOSAndType = mapOf(
-                "android" to mapOf(
-                    "mobile" to -0.59,
-                    "tablet" to -0.51
-                ),
-                "ios" to mapOf(
-                    "mobile" to 0.82,
-                    "tablet" to 0.05
-                )
-            ),
-            session = mapOf()
+            os = mapOf(
+                "android" to -0.51,
+                "ios" to 0.05
+            )
         )
     )
 }

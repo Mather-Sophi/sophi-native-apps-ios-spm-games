@@ -7,18 +7,17 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.cocoapods)
-
+    alias(libs.plugins.kotlinx.kover)
     id("maven-publish")
 }
 
 
 val artifactName = "paywall"
-version="0.0.4-alpha.1"
-group="io.sophi"
+version = "0.0.4-alpha.1"
+group = "io.sophi"
+
 
 kotlin {
-
-
 
     androidLibrary {
 
@@ -30,9 +29,6 @@ kotlin {
         withJava() // enable java compilation support
         withHostTestBuilder {}.configure {
             isIncludeAndroidResources = true
-        }
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
         }
 
         compilations.configureEach {
@@ -61,14 +57,14 @@ kotlin {
     }
 
 
-    tasks.register<Copy>("copyGeneratedIosFrameworkToPaywallKit"){
+    tasks.register<Copy>("copyGeneratedIosFrameworkToPaywallKit") {
         description = "Copies the generated iOS frameworks to the react-native bridge directory."
         dependsOn("podPublishXCFramework")
         from("build/cocoapods/publish/release/")
         into("../bridge/paywall-kit/ios/Frameworks")
     }
 
-    tasks.register<Copy>("copyGeneratedIosFrameworkToPaywallKitLegacy"){
+    tasks.register<Copy>("copyGeneratedIosFrameworkToPaywallKitLegacy") {
         description = "Copies the generated iOS frameworks to the legacy react-native bridge directory."
         dependsOn("podPublishXCFramework")
         from("build/cocoapods/publish/release/")
@@ -81,7 +77,7 @@ kotlin {
     }
 
     sourceSets {
-        commonMain{
+        commonMain {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.core)
@@ -105,17 +101,21 @@ kotlin {
             implementation(libs.android.startup.runtime)
         }
 
-        getByName("androidHostTest").dependencies {
-            implementation("androidx.test:core:1.7.0")
-            implementation("org.robolectric:robolectric:4.16")
-        }
-
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
 
     }
- }
+}
+
+
+// Configured to display test results in the console for CI/CD pipeline
+tasks.withType<AbstractTestTask> {
+    testLogging {
+        events("PASSED", "SKIPPED", "FAILED", "STANDARD_ERROR")
+    }
+}
+
 
 publishing {
     repositories {
@@ -133,7 +133,7 @@ publishing {
             from(components["kotlin"])
         }
 
-        withType<MavenPublication>{
+        withType<MavenPublication> {
             artifactId = artifactId.replace("-android", "-kit")
         }
     }

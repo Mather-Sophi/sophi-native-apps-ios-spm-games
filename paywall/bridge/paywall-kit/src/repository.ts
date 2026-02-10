@@ -64,26 +64,31 @@ export class PaywallDeciderRepository {
     NativePaywallKit.initializePaywallDeciderRepository(
       this.userDimensionsRepository.getAll(),
       this.deviceDimensionsRepository.getAll()
-    );
-    this.initialized = true;
+    ).then(() => {
+      this.initialized = true;
+    }).catch((error: any) => {
+      console.error("Error initializing PaywallDeciderRepository:", error); 
+    })
   }
 
   /**
    * Get a PaywallDecider instance for a specific host and settings
    * @param host API host URL
    * @param settings Configuration settings
-   * @returns PaywallDecider instance
+   * @returns Promise<PaywallDecider> instance
    */
-  getOneByHost(
+  async getOneByHost(
     host: string,
     settings: Record<string, string | null>
-  ): PaywallDecider {
+  ): Promise<PaywallDecider> {
 
-    NativePaywallKit.getPaywallDeciderConfigByHost(host, settings);
+    await NativePaywallKit.getPaywallDeciderConfigByHost(host, settings);
 
     return new PaywallDecider(
       host,
-      settings
+      settings,
+      this.userDimensionsRepository,
+      this.deviceDimensionsRepository 
     );
   }
 }
@@ -96,15 +101,16 @@ export class PaywallDeciderRepository {
  */
 export class PaywallDecider {
 
-    host: string;
-    settings: Record<string, string | null>;
+  host: string;
+  settings: Record<string, string | null>;
+  userDimensionsRepository: UserDimensionRepository;
+  deviceDimensionsRepository: DeviceDimensionRepository;
 
-  constructor(
-    host: string,
-    settings: Record<string, string | null>
-  ) {
+  constructor(host: string, settings: Record<string, string | null>, userDimensionsRepository: UserDimensionRepository, deviceDimensionsRepository: DeviceDimensionRepository) {
     this.host = host;
     this.settings = settings;
+    this.userDimensionsRepository = userDimensionsRepository;
+    this.deviceDimensionsRepository = deviceDimensionsRepository;
   }
   /**
    * Make a paywall decision for a content item
@@ -112,7 +118,20 @@ export class PaywallDecider {
    * @param assignedGroup Optional experiment group assignment
    * @returns WallDecision with outcome and experiment data
    */
-  decide(contentId: string, assignedGroup: string): WallDecision {
-    return NativePaywallKit.decide(contentId, assignedGroup);
+  decide(contentId: string, assignedGroup: string, contentProperties?: Record<string, any>, userProperties?: Record<string, any>): Promise<WallDecision> {
+    NativePaywallKit.updateDimensions(
+      this.userDimensionsRepository.getAll(), 
+      this.deviceDimensionsRepository.getAll()
+    ).then(() => {
+      console.debug("Dimensions updated successfully before decision.");
+    }).catch((error: any) => {
+      console.error("Error updating dimensions before decision:", error);
+    });
+    return NativePaywallKit.decide(
+        contentId, 
+        assignedGroup, 
+        contentProperties, 
+        userProperties
+      );
   }
 }

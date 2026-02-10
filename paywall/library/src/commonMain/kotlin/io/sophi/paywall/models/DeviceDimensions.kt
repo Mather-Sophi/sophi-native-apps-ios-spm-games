@@ -1,6 +1,7 @@
 package io.sophi.paywall.models
 
 import io.sophi.paywall.enums.DeviceType
+import io.sophi.paywall.enums.OSType
 import io.sophi.paywall.utils.getCurrentHour
 import io.sophi.paywall.utils.getDeviceInfo
 import kotlinx.serialization.Serializable
@@ -9,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Class representing device dimensions for analytics or tracking purposes.
  *
  * @property hourOfDay The hour of the day (0-23).
- * @property os The operating system of the device (e.g., "iOS", "Android").
+ * @property os The operating system of the device (e.g., "ios" or "android").
  * @property type The type of device ("native").
  * @property viewer The release version of the viewer application (e.g., "company-android-1.0.0").
  */
@@ -18,7 +19,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeviceDimensions(
     var hourOfDay: Int = getCurrentHour(),
-    var os: String? = null,
+    var os: OSType? = null,
     var type: DeviceType? = DeviceType.NATIVE,
     var viewer: String? = null
 ) {
@@ -27,19 +28,24 @@ data class DeviceDimensions(
         require(hourOfDay in 0..23) { "hourOfDay must be between 0 and 23" }
 
         if (os == null) {
-            os = deviceInfo.os.value
+            os = deviceInfo.os
         }
 
         // Hardcode Device Type to Native
-        type = DeviceType.NATIVE
+        type = deviceInfo.deviceType
     }
 
     companion object Factory {
         fun fromMap(data: Map<String, Any?>): DeviceDimensions {
             return DeviceDimensions(
                 hourOfDay = (data["hourOfDay"] as? Number)?.toInt() ?: getCurrentHour(),
-                os = data["os"] as? String,
-                type = DeviceType.NATIVE,
+                os = data["os"]?.let {
+                    try {
+                        OSType.valueOf((it as String).uppercase())
+                    } catch (_: IllegalArgumentException) {
+                        null // Returning null since init will set the correct value
+                    }
+                },
                 viewer = data["viewer"] as? String
             )
         }

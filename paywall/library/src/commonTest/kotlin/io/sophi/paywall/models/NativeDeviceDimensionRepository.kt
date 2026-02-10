@@ -1,6 +1,7 @@
 package io.sophi.paywall.models
 
 import io.sophi.paywall.enums.DeviceType
+import io.sophi.paywall.enums.OSType
 import io.sophi.paywall.repository.DeviceDimensionRepository
 
 class NativeDeviceDimensionRepository : DeviceDimensionRepository {
@@ -15,7 +16,7 @@ class NativeDeviceDimensionRepository : DeviceDimensionRepository {
 
     fun update(
         hourOfDay: Int = deviceDimension.hourOfDay,
-        os: String? = deviceDimension.os,
+        os: OSType? = deviceDimension.os,
         type: DeviceType? = deviceDimension.type,
         viewer: String? = deviceDimension.viewer
     ) {

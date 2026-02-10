@@ -76,8 +76,449 @@ val CONFIGURATION_API_SUCCESS_RESPONSE = """
         "avgBonus": 0.1,
         "avgRegwallBonus": 0.0,
         "isRandomized": true,
-        "visitorBonusParameters": {},
-        "visitorRegwallBonusParameters": {
+        "visitorPaywallBonusParameters": {
+          "anonymous": {
+            "todayStopRate": {
+              "0.0": 0.68,
+              "0.1": 4.43,
+              "0.2": 0.66,
+              "0.3": 1.55,
+              "0.4": 3.05,
+              "0.5": 0.65,
+              "0.6": 1.33,
+              "0.7": 0.59,
+              "0.8": 0.34,
+              "0.9": 0.66,
+              "1.0": -0.14
+            },
+            "sevenDayStopRate": {
+              "0.0": 0.33,
+              "0.1": 0.69,
+              "0.2": -0.66,
+              "0.3": -0.42,
+              "0.4": -0.69,
+              "0.5": -0.48,
+              "0.6": -0.61,
+              "0.7": -0.52,
+              "0.8": -0.56,
+              "0.9": -0.56,
+              "1.0": -0.33
+            },
+            "todayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "todayPageViewsByArticle": {
+              "0": 0.65,
+              "1": -0.26,
+              "2": 0.34,
+              "3": 0.71,
+              "4": 0.73,
+              "5": 0.83,
+              "6": 0.58,
+              "7": 2.18,
+              "8": 0.23,
+              "9": 0.75,
+              "10": -0.55
+            },
+            "todayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "todayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "todayTopLevelSections": {
+              "1": -0.18,
+              "2": 0.61,
+              "3": 0.73,
+              "4": 1.04,
+              "5": 0.79,
+              "6": -0.54,
+              "7": -0.02
+            },
+            "todayTopLevelSectionsByArticle": {
+              "0": 0.65,
+              "1": -0.04,
+              "2": -0.02,
+              "3": 0.02,
+              "4": -0.19,
+              "5": -0.2,
+              "6": -0.07
+            },
+            "sevenDayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayPageViewsByArticle": {
+              "0": 0.41,
+              "1": -0.07,
+              "2": -0.41,
+              "3": -0.37,
+              "4": -0.41,
+              "5": -0.56,
+              "6": -0.28,
+              "7": -0.56,
+              "8": -0.47,
+              "9": -0.62,
+              "10": -0.59,
+              "15": -0.78
+            },
+            "sevenDayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "sevenDayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "sevenDayTopLevelSections": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayTopLevelSectionsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayVisitCount": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViewsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "twentyEightDayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "twentyEightDayTopLevelSections": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayTopLevelSectionsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayVisitCount": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "daysSinceLastVisit": {
+              "0": 0.01,
+              "1": 0.28,
+              "2": -0.34,
+              "3": 0.14,
+              "4": -0.14,
+              "5": -0.2
+            },
+            "timeZone": {
+              "America/New_York": 0.1,
+              "Europe/London": 0.05
+            },
+            "hourOfDay": {
+              "0": -0.44,
+              "2": -0.43,
+              "4": -0.24,
+              "6": 0.11,
+              "8": 0.16,
+              "10": 0.14,
+              "12": 0.1,
+              "14": 0.13,
+              "16": -0.18,
+              "18": -0.03,
+              "20": 0.0,
+              "22": -0.22
+            },
+            "referrer": {
+              "campaign": 0.57,
+              "direct": -0.02,
+              "internal": 4.72,
+              "other": 2.74,
+              "search": -3.0,
+              "social": 0.56
+            },
+            "referrerDataMedium": {
+              "campaign": 0.5,
+              "search": 0.1
+            },
+            "referrerDataSource": {
+              "google": 0.3,
+              "facebook": 0.2
+            },
+            "referrerDataChannel": {
+              "search": 0.4,
+              "news": 0.15
+            },
+            "os": {
+              "android": -0.5,
+              "ios": 0.3
+            },
+            "type": {
+              "mobile": -0.4,
+              "tablet": 0.2
+            },
+            "viewer": {
+              "android webview": -0.4,
+              "chrome": -0.36,
+              "edge": 2.43,
+              "firefox": 2.26,
+              "mozilla compatible agent": 0.32,
+              "opera": 2.67,
+              "safari": 1.07,
+              "safari (in-app)": 0.7,
+              "samsung internet": -0.47
+            },
+            "visitorType": {
+              "anonymous": 0.5,
+              "registered": 0.2
+            },
+            "sessionCampaignName": {
+              "SpringSale": 0.3
+            },
+            "sessionReferrerDomain": {
+              "example.com": 0.5,
+              "anotherdomain.com": -0.3
+            },
+            "sessionReferrerMedium": {
+              "search": 0.4
+            },
+            "sessionReferrerSource": {
+              "google": 0.3
+            },
+            "sessionReferrerChannel": {
+              "search": 0.25
+            },
+            "assignedGroup": {
+              "control": 0.0,
+              "variant": 0.2
+            }
+          },
+          "registered": {
+            "todayStopRate": {
+              "0.0": 0.68,
+              "0.1": 4.43,
+              "0.2": 0.66,
+              "0.3": 1.55,
+              "0.4": 3.05,
+              "0.5": 0.65,
+              "0.6": 1.33,
+              "0.7": 0.59,
+              "0.8": 0.34,
+              "0.9": 0.66,
+              "1.0": -0.14
+            },
+            "sevenDayStopRate": {
+              "0.0": 0.33,
+              "0.1": 0.69,
+              "0.2": -0.66,
+              "0.3": -0.42,
+              "0.4": -0.69,
+              "0.5": -0.48,
+              "0.6": -0.61,
+              "0.7": -0.52,
+              "0.8": -0.56,
+              "0.9": -0.56,
+              "1.0": -0.33
+            },
+            "todayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "todayPageViewsByArticle": {
+              "0": 0.65,
+              "1": -0.26,
+              "2": 0.34,
+              "3": 0.71,
+              "4": 0.73,
+              "5": 0.83,
+              "6": 0.58,
+              "7": 2.18,
+              "8": 0.23,
+              "9": 0.75,
+              "10": -0.55
+            },
+            "todayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "todayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "todayTopLevelSections": {
+              "1": -0.18,
+              "2": 0.61,
+              "3": 0.73,
+              "4": 1.04,
+              "5": 0.79,
+              "6": -0.54,
+              "7": -0.02
+            },
+            "todayTopLevelSectionsByArticle": {
+              "0": 0.65,
+              "1": -0.04,
+              "2": -0.02,
+              "3": 0.02,
+              "4": -0.19,
+              "5": -0.2,
+              "6": -0.07
+            },
+            "sevenDayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayPageViewsByArticle": {
+              "0": 0.41,
+              "1": -0.07,
+              "2": -0.41,
+              "3": -0.37,
+              "4": -0.41,
+              "5": -0.56,
+              "6": -0.28,
+              "7": -0.56,
+              "8": -0.47,
+              "9": -0.62,
+              "10": -0.59,
+              "15": -0.78
+            },
+            "sevenDayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "sevenDayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "sevenDayTopLevelSections": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayTopLevelSectionsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "sevenDayVisitCount": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViews": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViewsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayPageViewsByArticleWithPaywall": {
+              "0": 0.0
+            },
+            "twentyEightDayPageViewsByArticleWithRegwall": {
+              "0": 0.0
+            },
+            "twentyEightDayTopLevelSections": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayTopLevelSectionsByArticle": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "twentyEightDayVisitCount": {
+              "0": 0.5,
+              "1": 0.1
+            },
+            "daysSinceLastVisit": {
+              "0": 0.01,
+              "1": 0.28,
+              "2": -0.34,
+              "3": 0.14,
+              "4": -0.14,
+              "5": -0.2
+            },
+            "timeZone": {
+              "America/New_York": 0.1,
+              "Europe/London": 0.05
+            },
+            "hourOfDay": {
+              "0": -0.44,
+              "2": -0.43,
+              "4": -0.24,
+              "6": 0.11,
+              "8": 0.16,
+              "10": 0.14,
+              "12": 0.1,
+              "14": 0.13,
+              "16": -0.18,
+              "18": -0.03,
+              "20": 0.0,
+              "22": -0.22
+            },
+            "referrer": {
+              "campaign": 0.57,
+              "direct": -0.02,
+              "internal": 4.72,
+              "other": 2.74,
+              "search": -3.0,
+              "social": 0.56
+            },
+            "referrerDataMedium": {
+              "campaign": 0.5,
+              "search": 0.1
+            },
+            "referrerDataSource": {
+              "google": 0.3,
+              "facebook": 0.2
+            },
+            "referrerDataChannel": {
+              "search": 0.4,
+              "news": 0.15
+            },
+            "os": {
+              "android": -0.5,
+              "ios": 0.3
+            },
+            "type": {
+              "mobile": -0.4,
+              "tablet": 0.2
+            },
+            "viewer": {
+              "android webview": -0.4,
+              "chrome": -0.36,
+              "edge": 2.43,
+              "firefox": 2.26,
+              "mozilla compatible agent": 0.32,
+              "opera": 2.67,
+              "safari": 1.07,
+              "safari (in-app)": 0.7,
+              "samsung internet": -0.47
+            },
+            "visitorType": {
+              "anonymous": 0.5,
+              "registered": 0.2
+            },
+            "sessionCampaignName": {
+              "SpringSale": 0.3
+            },
+            "sessionReferrerDomain": {
+              "example.com": 0.4,
+              "anotherdomain.com": -0.25
+            },
+            "sessionReferrerMedium": {
+              "search": 0.4
+            },
+            "sessionReferrerSource": {
+              "google": 0.3
+            },
+            "sessionReferrerChannel": {
+              "search": 0.25
+            },
+            "assignedGroup": {
+              "control": 0.0,
+              "variant": 0.2
+            }
+          }
+        },
+        "regwallBonusParameters": {
           "hourOfDay": {
             "0": -0.44,
             "2": -0.12,
@@ -158,7 +599,7 @@ val CONFIGURATION_API_SUCCESS_RESPONSE = """
             "safari (in-app)": 1.18,
             "samsung internet": -0.23
           },
-          "sevenDaysStopRate": {
+          "sevenDayStopRate": {
             "0.0": 0.28,
             "0.1": -0.65,
             "0.2": -0.46,
@@ -203,24 +644,26 @@ val CONFIGURATION_API_SUCCESS_RESPONSE = """
       }
     }
   ],
-  "userPropertyCodes": [
-    {
-      "key": "countryCode",
-      "name": "countryCode",
-      "type": "string"
-    },
-    {
-      "key": "2",
-      "name": "dummyField",
-      "type": "string"
-    }
-  ],
-  "contentPropertyCodes": [
-    {
-      "key": "1",
-      "name": "section",
-      "type": "string"
-    }
-  ]
+  "propertyCodes":{
+      "user": [
+        {
+          "key": "countryCode",
+          "name": "countryCode",
+          "type": "string"
+        },
+        {
+          "key": "2",
+          "name": "dummyField",
+          "type": "string"
+        }
+      ],
+      "content": [
+        {
+          "key": "1",
+          "name": "section",
+          "type": "string"
+        }
+      ]
+  }
 }
 """.trimIndent()

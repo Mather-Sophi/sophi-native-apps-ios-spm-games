@@ -34,7 +34,7 @@ object NativeDeviceDimensionRepository : DeviceDimensionRepository {
 
     fun update(
         hourOfDay: Int = deviceDimension.hourOfDay,
-        os: String? = deviceDimension.os,
+        os: OSType? = deviceDimension.os,
         type: DeviceType? = deviceDimension.type,
         viewer: String? = deviceDimension.viewer
     ) {

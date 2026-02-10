@@ -66,14 +66,14 @@ android {
 repositories {
   mavenCentral()
   google()
-  maven {
-    name = "GitHubPackages"
-    url = uri("https://maven.pkg.github.com/Mather-Sophi/io-sophi-paywall-native")
-    credentials {
-      username = project.findProperty("gpr.user") as String?: System.getenv("GITHUB_ACTOR")
-      password = project.findProperty("gpr.key") as String?: System.getenv("GITHUB_TOKEN")
-    }
-  }
+//  maven {
+//    name = "GitHubPackages"
+//    url = uri("https://maven.pkg.github.com/Mather-Sophi/io-sophi-paywall-native")
+//    credentials {
+//      username = project.findProperty("gpr.user") as String?: System.getenv("GITHUB_ACTOR")
+//      password = project.findProperty("gpr.key") as String?: System.getenv("GITHUB_TOKEN")
+//    }
+//  }
   mavenLocal()
 }
 
@@ -82,7 +82,7 @@ def kotlin_version = getExtOrDefault("kotlinVersion")
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation("io.sophi.android:paywall-kit:0.0.4-alpha")
+  implementation("io.sophi.android:paywall-kit:0.0.4-alpha.1")
 }
 
 

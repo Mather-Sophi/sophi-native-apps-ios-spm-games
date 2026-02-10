@@ -76,29 +76,33 @@ class Policy(val controlPolicy: ControlPolicy) {
             trace = traceBuilder.toString()
         )
     }
+}
 
-    private fun getFallbackOutcome(): Outcome {
-        return Outcome(wallVisibility = WallVisibility.NEVER)
-    }
+private fun getFallbackOutcome(): Outcome {
+    return Outcome(wallVisibility = WallVisibility.NEVER)
+}
 
-    private fun addSegmentTrace(
-        traceStringBuilder: StringBuilder,
-        wallType: WallType,
-        wallVisibility: WallVisibility,
-        score: Double?,
-        threshold: Double?,
-    ) {
-        score?.let { score ->
-            // First : TraceCode
-            traceStringBuilder.append(wallType.traceCode)
-            // Second : WallVisibility
-            traceStringBuilder.append(wallVisibility.code)
-            traceStringBuilder.append(wallType.code.toString())
-            val scaledScore = (score.times(100).roundToInt())
-            // Third & Fourth : 2 digit-score
-            traceStringBuilder.append(if (scaledScore < 100) scaledScore.toString().padStart(2, '0') else "xx")
-            // Fifth & Sixth : 2 digit-threshold
-            traceStringBuilder.append((threshold?.times(100))?.roundToInt().toString().padStart(2, '0'))
-        }
-    }
+internal fun addSegmentTrace(
+    traceStringBuilder: StringBuilder,
+    wallType: WallType,
+    wallVisibility: WallVisibility,
+    score: Double?,
+    threshold: Double?,
+) {
+    if (threshold == null || score == null) return
+
+    // First : TraceCode
+    traceStringBuilder.append(wallType.traceCode)
+    // Second : WallVisibility
+    traceStringBuilder.append(wallVisibility.code)
+    // Third : WallType
+    traceStringBuilder.append(wallType.code.toString())
+    // Fourth & Fifth : 2 digit-score
+    traceStringBuilder.append((score.times(100)).roundToInt().let {
+        if (it < 100) it.toString().padStart(2, '0') else "xx"
+    })
+    // Sixth & Seventh : 2 digit-threshold
+    traceStringBuilder.append((threshold.times(100)).roundToInt().let {
+        if (it < 100) it.toString().padStart(2, '0') else "xx"
+    })
 }

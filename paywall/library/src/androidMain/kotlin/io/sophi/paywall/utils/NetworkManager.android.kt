@@ -6,8 +6,10 @@ import android.net.Network
 import co.touchlab.kermit.Logger
 import io.sophi.paywall.applicationContext
 import io.sophi.paywall.isApplicationContextInitialized
+import io.sophi.paywall.utils.NetworkManagerLog as Logs
 
 object AndroidNetworkManager : NetworkManager {
+    @Volatile
     var isConnected = true
     override fun isOnline(): Boolean = isConnected
 
@@ -16,23 +18,27 @@ object AndroidNetworkManager : NetworkManager {
             val connectivityManager =
                 applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
             connectivityManager?.let {
-                Logger.i("NetworkManager initialized with ConnectivityManager.")
                 val networkCallback = object : ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
                         isConnected = true
                         super.onAvailable(network)
-                        Logger.i("NetworkManager detected network available.")
+                        Logger.d(Logs.NETWORK_ONLINE)
                     }
 
+                    override fun onLost(network: Network) {
+                        isConnected = false
+                        super.onLost(network)
+                        Logger.d(Logs.NETWORK_OFFLINE)
+                    }
                 }
                 connectivityManager.registerDefaultNetworkCallback(networkCallback)
             } ?: run {
-                Logger.w("Unable to get NetworkManager. Falling back to default isOnline = true.")
+                Logger.w(Logs.NETWORK_MANAGER_NOT_AVAILABLE)
                 isConnected = true
             }
         } else {
+            Logger.w(Logs.NETWORK_MANAGER_NOT_AVAILABLE)
             isConnected = true
-            Logger.w("Application context is not initialized, falling back to default isOnline = true.")
         }
     }
 

@@ -7,7 +7,7 @@ import kotlin.test.assertNull
 class ContentDimensionsTest {
 
     @Test
-    fun testContentDimensionsWithProperties() {
+    fun `ContentDimensions created with properties`() {
         val properties = mapOf(
             "section" to "news",
             "sectionCategory" to "high"
@@ -23,7 +23,7 @@ class ContentDimensionsTest {
     }
 
     @Test
-    fun testContentDimensionsWithoutProperties() {
+    fun `ContentDimensions created without properties`() {
         val contentDimensions = ContentDimensions(id = "content456")
 
         assertEquals(contentDimensions.id, "content456")
@@ -32,7 +32,7 @@ class ContentDimensionsTest {
     }
 
     @Test
-    fun testContentDimensionsWithPartialProperties() {
+    fun `ContentDimensions created with partial properties`() {
         val properties = mapOf(
             "section" to "sports"
         )

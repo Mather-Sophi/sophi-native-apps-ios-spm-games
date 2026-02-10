@@ -1,10 +1,8 @@
 package io.sophi.paywall.models
 
-import io.sophi.paywall.configuration.PropertyCodes
-import io.sophi.paywall.enums.DeviceType
-import io.sophi.paywall.enums.ExperimentGroup
-import io.sophi.paywall.enums.ReferrerMedium
-import io.sophi.paywall.enums.VisitorType
+import co.touchlab.kermit.Logger
+import io.sophi.paywall.configuration.PropertyCodesMap
+import io.sophi.paywall.enums.*
 
 class Context(
     // 1 day
@@ -41,7 +39,7 @@ class Context(
     var hourOfDay: Int,
 
     // device
-    var os: String?,
+    var os: OSType?,
     var type: DeviceType?,
     var viewer: String?,
 
@@ -100,6 +98,42 @@ class Context(
         }
     }
 
+    fun get(field: String): Any? {
+        when (field) {
+            "todayPageViews" -> return todayPageViews
+            "todayPageViewsByArticle" -> return todayPageViewsByArticle
+            "todayPageViewsByArticleWithPaywall" -> return todayPageViewsByArticleWithPaywall
+            "todayPageViewsByArticleWithRegwall" -> return todayPageViewsByArticleWithRegwall
+            "todayTopLevelSections" -> return todayTopLevelSections
+            "todayTopLevelSectionsByArticle" -> return todayTopLevelSectionsByArticle
+            "sevenDayPageViews" -> return sevenDayPageViews
+            "sevenDayPageViewsByArticle" -> return sevenDayPageViewsByArticle
+            "sevenDayPageViewsByArticleWithPaywall" -> return sevenDayPageViewsByArticleWithPaywall
+            "sevenDayPageViewsByArticleWithRegwall" -> return sevenDayPageViewsByArticleWithRegwall
+            "sevenDayTopLevelSections" -> return sevenDayTopLevelSections
+            "sevenDayTopLevelSectionsByArticle" -> return sevenDayTopLevelSectionsByArticle
+            "sevenDayVisitCount" -> return sevenDayVisitCount
+            "twentyEightDayPageViews" -> return twentyEightDayPageViews
+            "twentyEightDayPageViewsByArticle" -> return twentyEightDayPageViewsByArticle
+            "twentyEightDayPageViewsByArticleWithPaywall" -> return twentyEightDayPageViewsByArticleWithPaywall
+            "twentyEightDayPageViewsByArticleWithRegwall" -> return twentyEightDayPageViewsByArticleWithRegwall
+            "twentyEightDayTopLevelSections" -> return twentyEightDayTopLevelSections
+            "twentyEightDayTopLevelSectionsByArticle" -> return twentyEightDayTopLevelSectionsByArticle
+            "twentyEightDayVisitCount" -> return twentyEightDayVisitCount
+            "daysSinceLastVisit" -> return daysSinceLastVisit
+            "timeZone" -> return timeZone
+            "referrer" -> return referrer
+            "hourOfDay" -> return hourOfDay
+            "os" -> return os
+            "type" -> return type
+            "viewer" -> return viewer
+            "visitorType" -> return visitorType
+            "visitor" -> return visitor
+            "assignedGroup" -> return assignedGroup
+            else -> return null
+        }
+    }
+
     fun getEncodedContext(): String {
         fun getCode(featureCode: String, value: Int?): String {
             if (value == null) {
@@ -146,8 +180,12 @@ class Context(
 
         // Experiments assignedGroup (HB)
         assignedGroup?.let {
-            val group = ExperimentGroup.valueOf(it.uppercase()).code
-            inputs.add(getCode("HB", group))
+            try {
+                val group = ExperimentGroup.valueOf(it.uppercase()).code
+                inputs.add(getCode("HB", group))
+            } catch (e: Exception) {
+                Logger.d("Assigned group $it is not a valid value")
+            }
         }
 
         // Visitor
@@ -164,7 +202,7 @@ class Context(
         }
 
         // Device
-        os?.let { inputs.add(getCode("EA", it)) }
+        os?.let { inputs.add(getCode("EA", it.value)) }
         type?.let { inputs.add(getCode("EB", it.code)) }
         viewer?.let { inputs.add("EC:${it}") }
 
@@ -195,7 +233,7 @@ class Context(
         return inputs.joinToString("|")
     }
 
-    private fun encodeProperties(properties: Map<String, Any?>?, codes: List<PropertyCodes>?): String? {
+    private fun encodeProperties(properties: Map<String, Any?>?, codes: List<PropertyCodesMap>?): String? {
         if (properties == null || codes == null) {
             return null
         }
@@ -207,11 +245,11 @@ class Context(
         return encodedProperties.joinToString("|")
     }
 
-    fun getEncodedUserProperties(codes: List<PropertyCodes>?): String? {
+    fun getEncodedUserProperties(codes: List<PropertyCodesMap>?): String? {
         return encodeProperties(userProperties, codes)
     }
 
-    fun getEncodedContentProperties(codes: List<PropertyCodes>?): String? {
+    fun getEncodedContentProperties(codes: List<PropertyCodesMap>?): String? {
         return encodeProperties(content?.properties, codes)
     }
 }

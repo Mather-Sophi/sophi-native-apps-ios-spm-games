@@ -76,7 +76,7 @@ data class UserDimensions(
     var twentyEightDayTopLevelSectionsByArticle: Int = 0,
     var twentyEightDayVisitCount: Int = 0,
     var daysSinceLastVisit: Int = 0,
-    var visitorType: VisitorType = VisitorType.REGISTERED, // TODO: check if this needs to move to userProperties ?
+    var visitorType: VisitorType = VisitorType.REGISTERED,
     var visitor: Visitor? = null,
     var timeZone: String? = null,
     var referrer: ReferrerMedium? = null,

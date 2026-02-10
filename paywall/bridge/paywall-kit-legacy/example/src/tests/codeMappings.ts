@@ -5,89 +5,17 @@ import type {
   VisitorType,
   UserDimensions,
 } from '@mather-sophi/sophi-react-native-paywall-kit';
+import {
+  ReferrerMediumCodes,
+  ReferrerSourceCodes,
+  ReferrerChannelCodes,
+  VisitorTypeCodes,
+  ContextCodes,
+  InputCodes,
+} from '../constants/codes';
 
-// Numeric index codes for enum values (provided by user)
-export const ReferrerMediumCodes = {
-  campaign: 0,
-  direct: 1,
-  internal: 2,
-  search: 3,
-  social: 4,
-  other: 5,
-} as const;
-
-export const ReferrerSourceCodes = {
-  google: 0,
-  yahoo: 1,
-  duckduckgo: 2,
-  bing: 3,
-  facebook: 4,
-  instagram: 5,
-  x: 6,
-  linkedin: 7,
-  reddit: 8,
-  newsletter: 9,
-} as const;
-
-export const ReferrerChannelCodes = {
-  search: 0,
-  news: 1,
-  discover: 2,
-} as const;
-
-export const VisitorTypeCodes = {
-  anonymous: 0,
-  registered: 1,
-} as const;
-
-// Prefixes for encoded context and input codes
-export const ContextPrefixes = {
-  todayPageViews: 'AA',
-  todayPageViewsByArticle: 'AB',
-  todayPageViewsByArticleWithPaywall: 'AC',
-  todayTopLevelSections: 'AD',
-  todayTopLevelSectionsByArticle: 'AE',
-  todayPageViewsByArticleWithRegwall: 'AF',
-
-  sevenDayPageViews: 'BA',
-  sevenDayPageViewsByArticle: 'BB',
-  sevenDayPageViewsByArticleWithPaywall: 'BC',
-  sevenDayTopLevelSections: 'BD',
-  sevenDayTopLevelSectionsByArticle: 'BE',
-  sevenDayVisitCount: 'BF',
-  sevenDayPageViewsByArticleWithRegwall: 'BG',
-
-  twentyEightDayPageViews: 'CA',
-  twentyEightDayPageViewsByArticle: 'CB',
-  twentyEightDayPageViewsByArticleWithPaywall: 'CC',
-  twentyEightDayTopLevelSections: 'CD',
-  twentyEightDayTopLevelSectionsByArticle: 'CE',
-  twentyEightDayVisitCount: 'CF',
-  twentyEightDayPageViewsByArticleWithRegwall: 'CG',
-
-  daysSinceLastVisit: 'DA',
-  // Inputs with numeric-like formatting (hourOfDay) are treated separately
-} as const;
-
-export const InputPrefixes = {
-  visitorType: 'FA',
-  os: 'EA',
-  type: 'EB',
-  viewer: 'EC',
-  hourOfDay: 'DD',
-  timeZone: 'DB',
-  referrerMedium: 'DE',
-  referrerSource: 'DF',
-  referrerChannel: 'DG',
-  campaignName: 'GA',
-  referrerDomain: 'GB',
-  sessionReferrerMedium: 'GC',
-  sessionReferrerSource: 'GD',
-  sessionReferrerChannel: 'GE',
-} as const;
-
-export type ContextKey = keyof typeof ContextPrefixes;
-export type InputKey = keyof typeof InputPrefixes;
+export type ContextKey = keyof typeof ContextCodes;
+export type InputKey = keyof typeof InputCodes;
 
 export function pad2(n: number): string {
   // Pad to at least 2 digits; allow values > 99 without truncation
@@ -96,7 +24,7 @@ export function pad2(n: number): string {
 }
 
 export function encodeContextCode(key: ContextKey, value: number): string {
-  const prefix = ContextPrefixes[key];
+  const prefix = ContextCodes[key];
   if (prefix == null) throw new Error(`Unknown context key: ${key}`);
   const padded = pad2(value);
   return `${prefix}${padded}`;
@@ -105,7 +33,7 @@ export function encodeContextCode(key: ContextKey, value: number): string {
 export type InputValue = string | number;
 
 export function encodeInputCode(key: InputKey, value: InputValue, format: 'name' | 'index' = 'name'): string {
-  const prefix = InputPrefixes[key];
+  const prefix = InputCodes[key];
   if (prefix == null) throw new Error(`Unknown input key: ${key}`);
 
   // Special handling for hourOfDay numeric padding

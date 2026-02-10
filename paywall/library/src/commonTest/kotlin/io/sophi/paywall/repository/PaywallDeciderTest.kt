@@ -21,6 +21,7 @@ import io.sophi.paywall.models.NativeDeviceDimensionRepository
 import io.sophi.paywall.models.NativeUserDimensionRepository
 import io.sophi.paywall.models.Outcome
 import io.sophi.paywall.models.Settings
+import io.sophi.paywall.utils.getDeviceInfo
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.test.BeforeTest
@@ -47,6 +48,7 @@ class PaywallDeciderTest {
     }
 
     private lateinit var mockClient: HttpClient
+    val os = getDeviceInfo().os.value
 
     @BeforeTest
     fun setup() {
@@ -115,7 +117,7 @@ class PaywallDeciderTest {
     }
 
     @Test
-    fun testPaywallDecisionWhenPaywallAPIResponseReturnsPaywall() {
+    fun `test decision when API returns paywall`() {
         val settings = Settings(
             mapOf(
                 "apiTimeoutInMilliSeconds" to "5000",
@@ -150,7 +152,7 @@ class PaywallDeciderTest {
                 decision.context
             )
             assertEquals(
-                "HB:02|FA:01|DC:03|DE:03|DF:08|DG:00|EA:ios|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
+                "HB:02|FA:01|DC:03|DE:03|DF:08|DG:00|EA:${os}|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
                 decision.inputs
             )
             assertEquals(Outcome(wallType = WallType.PAYWALL, wallVisibility = WallVisibility.ALWAYS), decision.outcome)
@@ -158,7 +160,7 @@ class PaywallDeciderTest {
     }
 
     @Test
-    fun testPaywallDecisionWhenPaywallAPIResponseReturnsNoWall() {
+    fun `test decision when API returns no wall`() {
         val settings = Settings(
             mapOf(
                 "apiTimeoutInMilliSeconds" to "5000",
@@ -192,7 +194,7 @@ class PaywallDeciderTest {
                 decision.context
             )
             assertEquals(
-                "FA:01|DC:03|DE:03|DF:08|DG:00|EA:ios|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
+                "FA:01|DC:03|DE:03|DF:08|DG:00|EA:${os}|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
                 decision.inputs
             )
             assertEquals(Outcome(wallVisibility = WallVisibility.NEVER), decision.outcome)
@@ -205,7 +207,7 @@ class PaywallDeciderTest {
     }
 
     @Test
-    fun testPaywallDecisionWhenPaywallAPIResponseIsError() {
+    fun `test decision when API returns error`() {
         val settings = Settings(
             mapOf(
                 "apiTimeoutInMilliSeconds" to "5000",
@@ -243,7 +245,7 @@ class PaywallDeciderTest {
                 decision.context
             )
             assertEquals(
-                "HB:01|FA:01|DC:03|DE:03|DF:08|DG:00|EA:ios|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
+                "HB:01|FA:01|DC:03|DE:03|DF:08|DG:00|EA:${os}|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
                 decision.inputs
             )
             assertEquals(Outcome(wallVisibility = WallVisibility.NEVER), decision.outcome)
@@ -258,7 +260,7 @@ class PaywallDeciderTest {
     }
 
     @Test
-    fun testPaywallDecisionWhenUserAndDeviceDimensionsAreUpdated() {
+    fun `test decision updated after user and device dimension values are updated`() {
         val settings = Settings(
             mapOf(
                 "apiTimeoutInMilliSeconds" to "5000",
@@ -292,7 +294,7 @@ class PaywallDeciderTest {
                 decision.context
             )
             assertEquals(
-                "FA:01|DC:03|DE:03|DF:08|DG:00|EA:ios|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
+                "FA:01|DC:03|DE:03|DF:08|DG:00|EA:${os}|EB:06|DD:14|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
                 decision.inputs
             )
             assertEquals(Outcome(wallVisibility = WallVisibility.NEVER), decision.outcome)
@@ -330,7 +332,7 @@ class PaywallDeciderTest {
                 decision.context
             )
             assertEquals(
-                "FA:00|DC:02|DE:03|DF:08|DG:00|EA:ios|EB:06|DD:09|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
+                "FA:00|DC:02|DE:03|DF:08|DG:00|EA:${os}|EB:06|DD:09|DB:America/New_York|GA:SpringSale|GB:google.com|GC:search|GD:google|GE:search",
                 decision.inputs
             )
             assertEquals(Outcome(wallVisibility = WallVisibility.NEVER), decision.outcome)
@@ -343,7 +345,7 @@ class PaywallDeciderTest {
     }
 
     @Test
-    fun testUpdateDimensions() {
+    fun `updateDimensions updates dimensions`() {
         val settings = Settings(
             mapOf(
                 "apiTimeoutInMilliSeconds" to "5000",

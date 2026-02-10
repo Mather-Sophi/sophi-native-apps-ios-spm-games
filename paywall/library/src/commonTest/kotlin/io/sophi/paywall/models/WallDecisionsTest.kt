@@ -19,7 +19,7 @@ class WallDecisionsTest {
     }
 
     @Test
-    fun testWallDecisionWhenPaywall() {
+    fun `wall decision created successfully when outcome is paywall`() {
         val outcome = Outcome(
             wallType = WallType.PAYWALL,
             wallVisibility = WallVisibility.ALWAYS,
@@ -65,7 +65,7 @@ class WallDecisionsTest {
     }
 
     @Test
-    fun testWallDecisionWhenNoWall() {
+    fun `wall decision created successfully when outcome is no wall`() {
         val outcome = Outcome(
             wallType = null,
             wallVisibility = WallVisibility.NEVER,

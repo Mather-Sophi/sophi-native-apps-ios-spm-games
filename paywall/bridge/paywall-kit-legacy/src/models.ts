@@ -23,6 +23,10 @@ export type ReferrerSource =
 
 export type ReferrerChannel = 'search' | 'news' | 'discover';
 
+export type DeviceType = 'native';
+
+export type DeviceOs = 'ios' | 'android';
+
 export type Visitor = {
   session: Session | null;
 };
@@ -68,15 +72,14 @@ export type UserDimensions = {
   visitorType: VisitorType;
   visitor: Visitor | null;
   timeZone: string | null;
-  referrer: string | null;
+  referrer: ReferrerMedium;
   referrerData: ReferrerData | null;
-  countryCode: string | null;
 };
 
 export type DeviceDimensions = {
   hourOfDay: number; // 0-23
-  os: string | null; // e.g., "ios", "android"
-  type: string | null; // e.g., "native"
+  os: DeviceOs;
+  type: DeviceType;
   viewer: string | null; // e.g., "company-ios-1.0.0"
 };
 

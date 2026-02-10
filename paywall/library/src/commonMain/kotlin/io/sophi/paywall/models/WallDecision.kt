@@ -22,7 +22,14 @@ data class WallDecision(
 
     fun copy(
         trace: String? = this.trace,
+        context: String? = this.context,
+        inputs: String? = this.inputs,
         outcome: Outcome = this.outcome,
+        searchParams: String? = this.searchParams,
+        experimentsCode: String? = this.experimentsCode,
+        paywallScore: Int? = this.paywallScore,
+        userProperties: String? = this.userProperties,
+        contentProperties: String? = this.contentProperties
     ): WallDecision {
         return WallDecision(
             id,
