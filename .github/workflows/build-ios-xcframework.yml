@@ -90,7 +90,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: /tmp/artifacts
+          path: /tmp/artifacts/Paywall.xcframework
       
       - name: Zip XCFramework
         run: |
