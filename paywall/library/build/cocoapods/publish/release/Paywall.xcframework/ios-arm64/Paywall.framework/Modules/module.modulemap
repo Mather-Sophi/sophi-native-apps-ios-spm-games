@@ -1,0 +1,8 @@
+framework module "Paywall" {
+    umbrella header "Paywall.h"
+
+    export *
+    module * { export * }
+
+    use Foundation
+}
