@@ -96,11 +96,7 @@ jobs:
         run: |
           ls ${{ steps.artifact-download.outputs.download-path }}
           cd /tmp/artifacts/ && zip -r Paywall.xcframework.zip Paywall.xcframework
-      # - name: Zip XCFramework
-      #   run: |
-      #     cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./file.xcframework
 
-      # - uses: swift-actions/setup-swift@v3
       - name: Compute XCFramework checksum
         id: xc-framework-checksum
         run: checksum=$(swift package compute-checksum /tmp/artifacts/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
@@ -122,11 +118,12 @@ jobs:
           path: /tmp/artifacts/Paywall.xcframework.zip
           if-no-files-found: error
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: Mather-Sophi/sophi-native-apps-ios-spm-games
 
       - name: Commit updated Package.swift
+        working-directory: .
         run: |
           git checkout -b release/${{ github.event.inputs.release_tag }}
           cp /tmp/artifacts/Package.swift ./Package.swift
