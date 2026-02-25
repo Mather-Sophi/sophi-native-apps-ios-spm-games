@@ -94,9 +94,8 @@ jobs:
       
       - name: Zip XCFramework
         run: |
-          ls -R ${{ steps.artifact-download.outputs.download-path }}
-          ls -R ${{ steps.artifact-download.outputs.download-path }}/Paywall.xcframework
-          zip -r Paywall.xcframework.zip ${{ steps.artifact-download.outputs.download-path }}/Paywall.xcframework
+          ls ${{ steps.artifact-download.outputs.download-path }}
+          cd /tmp/artifacts/ && zip -r Paywall.xcframework.zip Paywall.xcframework
       # - name: Zip XCFramework
       #   run: |
       #     cd library/build/cocoapods/publish/release && zip -r ${GITHUB_WORKSPACE}/Paywall.xcframework.zip ./file.xcframework
@@ -105,7 +104,7 @@ jobs:
       - name: Compute XCFramework checksum
         id: xc-framework-checksum
         # run: echo "checksum=ASDFGHJKL" >> $GITHUB_OUTPUT
-        run: checksum=$(swift package compute-checksum ${GITHUB_WORKSPACE}/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
+        run: checksum=$(swift package compute-checksum /tmp/artifacts/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
 
       - name: Print checksum
         run: |
