@@ -131,6 +131,8 @@ jobs:
           git checkout -b release/${{ github.event.inputs.release_tag }}
           cp /tmp/artifacts/Package.swift ./Package.swift
           git add ./Package.swift
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git commit -m "Update Package.swift with new release tag ${{ github.event.inputs.release_tag }}"
           git push origin release/${{ github.event.inputs.release_tag }}
 
