@@ -13,7 +13,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Paywall",
-            path: "build/cocoapods/publish/release/Paywall.xcframework"
+            url: "https://github.com/Mather-Sophi/sophi-native-apps-ios-spm-games/releases/download/${RELEASE_TAG}/Paywall.xcframework.zip",
+            checksum: "${CHECKSUM}"
         )
     ]
 )

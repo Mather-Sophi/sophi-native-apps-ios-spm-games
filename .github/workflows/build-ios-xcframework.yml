@@ -103,7 +103,6 @@ jobs:
       # - uses: swift-actions/setup-swift@v3
       - name: Compute XCFramework checksum
         id: xc-framework-checksum
-        # run: echo "checksum=ASDFGHJKL" >> $GITHUB_OUTPUT
         run: checksum=$(swift package compute-checksum /tmp/artifacts/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
 
       - name: Print checksum
@@ -125,12 +124,12 @@ jobs:
       #   id: xc-framework-checksum
       #   run: swift package compute-checksum ${GITHUB_WORKSPACE}/Paywall.xcframework.zip
 
-      # - name: Upload XCFramework as artifact
-      #   uses: actions/upload-artifact@v6
-      #   with:
-      #     name: paywall-ios-xcframework
-      #     path: Paywall.xcframework.zip
-      #     if-no-files-found: error
+      - name: Upload XCFramework as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: paywall-ios-xcframework
+          path: /tmp/artifacts/Paywall.xcframework.zip
+          if-no-files-found: error
 
   # release:
   #   needs: build
