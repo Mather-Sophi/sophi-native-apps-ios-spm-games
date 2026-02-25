@@ -131,7 +131,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework-zip
-          path: /tmp/artifacts/Paywall.xcframework.zip
+          path: /tmp/artifacts
 
       - name: Test download
         run: ls -la /tmp/artifacts/Paywall.xcframework.zip
