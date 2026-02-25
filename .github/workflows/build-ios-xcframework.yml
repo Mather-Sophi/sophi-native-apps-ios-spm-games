@@ -123,7 +123,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: build
+    needs: package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -132,7 +132,7 @@ jobs:
         with:
           name: paywall-ios-xcframework-zip
           path: /tmp/artifacts/Paywall.xcframework.zip
-          if-no-files-found: error
+
       - name: Test download
         run: ls -la /tmp/artifacts/Paywall.xcframework.zip
 
