@@ -125,10 +125,10 @@ jobs:
       - uses: actions/checkout@v5
         with:
           repository: Mather-Sophi/sophi-native-apps-ios-spm-games
-          ref: release/${{ github.event.inputs.release_tag }}
 
       - name: Commit updated Package.swift
         run: |
+          git checkout -b release/${{ github.event.inputs.release_tag }}
           cp /tmp/artifacts/Package.swift ./Package.swift
           git add ./Package.swift
           git commit -m "Update Package.swift with new release tag ${{ github.event.inputs.release_tag }}"
