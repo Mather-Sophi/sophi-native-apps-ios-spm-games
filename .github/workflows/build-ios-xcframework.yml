@@ -114,15 +114,6 @@ jobs:
           sed -i 's/\${RELEASE_TAG}/${{ github.event.inputs.release_tag }}/g' library/Package.swift
           sed -i 's/\${CHECKSUM}/${{ steps.xc-framework-checksum.outputs.checksum }}/g' library/Package.swift
           cat library/Package.swift
-          
-      # - name: Commit and push Package.swift changes
-      #   run: | 
-
-
-        # - uses: swift-actions/setup-swift@v3
-      # - name: Compute XCFramework checksum
-      #   id: xc-framework-checksum
-      #   run: swift package compute-checksum ${GITHUB_WORKSPACE}/Paywall.xcframework.zip
 
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
@@ -131,21 +122,22 @@ jobs:
           path: /tmp/artifacts/Paywall.xcframework.zip
           if-no-files-found: error
 
-  # release:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v5
-  #     - name: Download xcframework artifact
-  #       uses: actions/download-artifact@v6
-  #       with:
-  #         name: paywall-ios-xcframework
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download xcframework artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: paywall-ios-xcframework-zip
+          path: /tmp/artifacts/Paywall.xcframework.zip
+          if-no-files-found: error
+      - name: Test download
+        run: ls -la /tmp/artifacts/Paywall.xcframework.zip
 
-  #     - name: Test download
-  #       run: ls -la ${{ github.workspace }}/Paywall.xcframework.zip
-
-  #     - name: Create GitHub release and attach xcframework
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         gh release create ${{ github.event.inputs.release_tag }} ${{ github.workspace }}/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft --prerelease
+      - name: Create GitHub release and attach xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.event.inputs.release_tag }} /tmp/artifacts/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft --prerelease
