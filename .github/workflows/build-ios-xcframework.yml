@@ -19,10 +19,12 @@ on:
 defaults:
   run:
     working-directory: paywall
+env:
+  ARTIFACTS_DIR: /tmp/artifacts
 jobs:
   validate:
-    # runs-on: ubuntu-latest
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v6
 
@@ -50,6 +52,7 @@ jobs:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
+    needs: validate
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -83,23 +86,24 @@ jobs:
     steps:
       
       - uses: actions/checkout@v6
-        # TODO: Checkout Target Repository that contains Package.swift
+        with:
+          path: main-repo
 
       - id: artifact-download
         name: Download xcframework artifact
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework
-          path: /tmp/artifacts/Paywall.xcframework
+          path: ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework
       
       - name: Zip XCFramework
         run: |
           ls ${{ steps.artifact-download.outputs.download-path }}
-          cd /tmp/artifacts/ && zip -r Paywall.xcframework.zip Paywall.xcframework
+          cd ${{ env.ARTIFACTS_DIR }} && zip -r Paywall.xcframework.zip Paywall.xcframework
 
       - name: Compute XCFramework checksum
         id: xc-framework-checksum
-        run: checksum=$(swift package compute-checksum /tmp/artifacts/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
+        run: checksum=$(swift package compute-checksum ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
 
       - name: Print checksum
         run: |
@@ -109,24 +113,42 @@ jobs:
         run: |
           sed -i 's/\${RELEASE_TAG}/${{ github.event.inputs.release_tag }}/g' library/Package.swift
           sed -i 's/\${CHECKSUM}/${{ steps.xc-framework-checksum.outputs.checksum }}/g' library/Package.swift
-          cat library/Package.swift >> /tmp/artifacts/Package.swift
+          cat library/Package.swift >> ${{ env.ARTIFACTS_DIR }}/Package.swift
+
+      - name: Test updated Package.swift
+        run: |
+          cat ${{ env.ARTIFACTS_DIR }}/Package.swift
+          if grep -q '\${RELEASE_TAG}\|\${CHECKSUM}' ${{ env.ARTIFACTS_DIR }}/Package.swift; then
+            echo "Error: Package.swift still contains placeholder values."
+            exit 1
+          fi
+          if ! grep -q "${{ github.event.inputs.release_tag }}" ${{ env.ARTIFACTS_DIR }}/Package.swift; then
+            echo "Error: Release tag was not updated in Package.swift."
+            exit 1
+          fi
+          if ! grep -q "${{ steps.xc-framework-checksum.outputs.checksum }}" ${{ env.ARTIFACTS_DIR }}/Package.swift; then
+            echo "Error: Checksum was not updated in Package.swift."
+            exit 1
+          fi
 
       - name: Upload XCFramework as artifact
         uses: actions/upload-artifact@v6
         with:
           name: paywall-ios-xcframework-zip
-          path: /tmp/artifacts/Paywall.xcframework.zip
+          path: ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip
           if-no-files-found: error
 
       - uses: actions/checkout@v6
         with:
           repository: Mather-Sophi/sophi-native-apps
+          path: release-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit updated Package.swift
-        working-directory: .
+        working-directory: release-repo
         run: |
           git checkout -b release/${{ github.event.inputs.release_tag }}
-          cp /tmp/artifacts/Package.swift ./Package.swift
+          cp ${{ env.ARTIFACTS_DIR }}/Package.swift ./Package.swift
           git add ./Package.swift
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
@@ -134,10 +156,10 @@ jobs:
           git push origin release/${{ github.event.inputs.release_tag }}
 
       - name: Test download
-        run: ls -la /tmp/artifacts/Paywall.xcframework.zip
+        run: ls -la ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip
 
       - name: Create GitHub release and attach xcframework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ github.event.inputs.release_tag }} /tmp/artifacts/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft --prerelease
+          gh release create ${{ github.event.inputs.release_tag }} ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft --prerelease
