@@ -141,6 +141,7 @@ jobs:
           repository: Mather-Sophi/sophi-native-apps
           path: release-repo
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
 
       - name: Commit updated Package.swift
         working-directory: release-repo
