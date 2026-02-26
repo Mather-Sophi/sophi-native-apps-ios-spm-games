@@ -86,8 +86,6 @@ jobs:
     steps:
       
       - uses: actions/checkout@v6
-        with:
-          path: main-repo
 
       - id: artifact-download
         name: Download xcframework artifact
