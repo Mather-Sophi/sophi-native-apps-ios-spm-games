@@ -140,7 +140,7 @@ jobs:
         with:
           repository: Mather-Sophi/sophi-native-apps
           path: release-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PIPELINE_PAT }}
           ref: main
 
       - name: Commit updated Package.swift
@@ -159,6 +159,6 @@ jobs:
 
       - name: Create GitHub release and attach xcframework
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PIPELINE_PAT }}
         run: |
           gh release create ${{ github.event.inputs.release_tag }} ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip --title "${{ github.event.inputs.release_tag }}" --notes "Release notes" --draft --prerelease
