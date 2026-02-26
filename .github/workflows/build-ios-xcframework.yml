@@ -21,6 +21,8 @@ defaults:
     working-directory: paywall
 env:
   ARTIFACTS_DIR: /tmp/artifacts
+  RELEASE_REPO: Mather-Sophi/sophi-native-apps-ios-spm-games
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -88,7 +90,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - id: artifact-download
-        name: Download xcframework artifact
+        name: Download XCFramework artifact
         uses: actions/download-artifact@v6
         with:
           name: paywall-ios-xcframework
@@ -103,17 +105,17 @@ jobs:
         id: xc-framework-checksum
         run: checksum=$(swift package compute-checksum ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip); echo "checksum=$checksum" >> $GITHUB_OUTPUT
 
-      - name: Print checksum
+      - name: Display computed checksum
         run: |
           echo "XCFramework Checksum: ${{ steps.xc-framework-checksum.outputs.checksum }}"
 
-      - name: Update Swift binary targets 
+      - name: Generate Package.swift
         run: |
           sed -i 's/\${RELEASE_TAG}/${{ github.event.inputs.release_tag }}/g' library/Package.swift
           sed -i 's/\${CHECKSUM}/${{ steps.xc-framework-checksum.outputs.checksum }}/g' library/Package.swift
           cat library/Package.swift >> ${{ env.ARTIFACTS_DIR }}/Package.swift
 
-      - name: Test updated Package.swift
+      - name: Validate Package.swift substitutions
         run: |
           cat ${{ env.ARTIFACTS_DIR }}/Package.swift
           if grep -q '\${RELEASE_TAG}\|\${CHECKSUM}' ${{ env.ARTIFACTS_DIR }}/Package.swift; then
@@ -129,21 +131,15 @@ jobs:
             exit 1
           fi
 
-      - name: Upload XCFramework as artifact
-        uses: actions/upload-artifact@v6
+      - name: Checkout release repository
+        uses: actions/checkout@v6
         with:
-          name: paywall-ios-xcframework-zip
-          path: ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip
-          if-no-files-found: error
-
-      - uses: actions/checkout@v6
-        with:
-          repository: Mather-Sophi/sophi-native-apps
+          repository: ${{ env.RELEASE_REPO }}
           path: release-repo
           token: ${{ secrets.PIPELINE_PAT }}
           ref: main
 
-      - name: Commit updated Package.swift
+      - name: Commit and push Package.swift to release branch
         working-directory: release-repo
         run: |
           git checkout -b release/${{ github.event.inputs.release_tag }}
@@ -154,10 +150,7 @@ jobs:
           git commit -m "Update Package.swift with new release tag ${{ github.event.inputs.release_tag }}"
           git push origin release/${{ github.event.inputs.release_tag }}
 
-      - name: Test download
-        run: ls -la ${{ env.ARTIFACTS_DIR }}/Paywall.xcframework.zip
-
-      - name: Create GitHub release and attach xcframework
+      - name: Create draft GitHub release with XCFramework
         env:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_PAT }}
         run: |
