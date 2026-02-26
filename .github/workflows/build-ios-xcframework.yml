@@ -96,7 +96,7 @@ jobs:
       
       - name: Zip XCFramework
         run: |
-          ls ${{ steps.artifact-download.outputs.download-path }}
+          # ls ${{ steps.artifact-download.outputs.download-path }}
           cd ${{ env.ARTIFACTS_DIR }} && zip -r Paywall.xcframework.zip Paywall.xcframework
 
       - name: Compute XCFramework checksum
