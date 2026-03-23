@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "PaywallBinary",
-            url: "https://github.com/Mather-Sophi/sophi-native-apps-ios-spm-games/releases/download/v0.0.1/Paywall.xcframework.zip",
-            checksum: "e1427c65ff6d1bdd0b2cf0e49b13ad283f8d5f86b950e63fdf22e3df39c0643a"
+            url: "https://github.com/Mather-Sophi/sophi-native-apps-ios-spm-games/releases/download/v0.0.6/Paywall.xcframework.zip",
+            checksum: "8c3f5206d857adb7ba26618f89ba4a93fec04d4ba713d61f76a40117897719e9"
         ),
         .target(
             name: "PaywallKit",
